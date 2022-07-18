@@ -1,2 +1,5 @@
 .idea/
 /starter_code/target/
+*.log
+*.iml
+.DS_Store
