@@ -55,6 +55,7 @@ public class OrderControllerTest {
 
     @Test
     public void testSubmitFail() {
+        when(userRepository.findByUsername(USERNAME)).thenReturn(null);
         ResponseEntity<UserOrder> response = orderController.submit(USERNAME);
         assertNull(response.getBody());
         assertEquals(404, response.getStatusCodeValue());
@@ -78,6 +79,7 @@ public class OrderControllerTest {
 
     @Test
     public void testGetOrderNotFound() {
+        when(userRepository.findByUsername(USERNAME)).thenReturn(null);
         ResponseEntity<UserOrder> response = orderController.submit(USERNAME);
         assertNull(response.getBody());
         assertEquals(404, response.getStatusCodeValue());
