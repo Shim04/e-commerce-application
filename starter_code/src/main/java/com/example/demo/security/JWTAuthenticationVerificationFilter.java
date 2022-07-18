@@ -21,8 +21,8 @@ This class is responsible for the authorization process.
 This class extends the BasicAuthenticationFilter class.
 */
 @Component
-public class JWTAuthenticationVerficationFilter extends BasicAuthenticationFilter {
-    public JWTAuthenticationVerficationFilter(AuthenticationManager authManager) {
+public class JWTAuthenticationVerificationFilter extends BasicAuthenticationFilter {
+    public JWTAuthenticationVerificationFilter(AuthenticationManager authManager) {
         super(authManager);
     }
 
