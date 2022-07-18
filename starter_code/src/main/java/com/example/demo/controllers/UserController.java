@@ -2,6 +2,8 @@ package com.example.demo.controllers;
 
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +24,7 @@ import com.example.demo.model.requests.CreateUserRequest;
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
-	
+	public static final Logger logger = LoggerFactory.getLogger(UserController.class);
 	@Autowired
 	private UserRepository userRepository;
 	
@@ -40,6 +42,9 @@ public class UserController {
 	@GetMapping("/{username}")
 	public ResponseEntity<User> findByUserName(@PathVariable String username) {
 		User user = userRepository.findByUsername(username);
+		if(user == null) {
+			logger.warn("USER_NOT_FOUND. User " + username + " cannot be found.");
+		}
 		return user == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(user);
 	}
 	
@@ -50,12 +55,17 @@ public class UserController {
 		Cart cart = new Cart();
 		cartRepository.save(cart);
 		user.setCart(cart);
-		if(createUserRequest.getPassword().length() < 7 ||
-				!createUserRequest.getPassword().equals(createUserRequest.getConfirmPassword())) {
+		if(createUserRequest.getPassword().length() < 7) {
+			logger.error("USER_CREATE_FAILED. Length of password could not be less than 7.");
+			return ResponseEntity.badRequest().build();
+		}
+		if(!createUserRequest.getPassword().equals(createUserRequest.getConfirmPassword())) {
+			logger.error("USER_CREATE_FAILED. Confirm password does not match password.");
 			return ResponseEntity.badRequest().build();
 		}
 		user.setPassword(bCryptPasswordEncoder.encode(createUserRequest.getPassword()));
 		userRepository.save(user);
+		logger.info("USER_CREATE_SUCCEEDED. User " + user.getUsername() + " is created.");
 		return ResponseEntity.ok(user);
 	}
 	
